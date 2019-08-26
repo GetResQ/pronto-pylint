@@ -12,3 +12,6 @@ Style/Documentation:
 
 Layout/MultilineMethodCallIndentation:
   EnforcedStyle: indented
+
+AllCops:
+  TargetRubyVersion: 2.2
