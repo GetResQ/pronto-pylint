@@ -38,9 +38,9 @@ module Pronto
         .join(' ')
 
       stdout, stderr, = Open3.capture3("#{pylint_executable} --output-format=json #{file_args}")
-      stderr.try(:strip!)
+      stderr.strip!
 
-      puts "WARN: pronto-pylint:\n\n#{stderr}" if stderr && !stderr.empty?
+      puts "WARN: pronto-pylint:\n\n#{stderr}" unless stderr.empty?
 
       JSON.parse(stdout, symbolize_names: true)
         .map { |json| Offence.create_from_json(json) }
