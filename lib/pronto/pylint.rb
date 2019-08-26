@@ -8,7 +8,6 @@ module Pronto
   Offence = Struct.new(
     :type, :module, :line, :column, :path, :symbol, :message, :message_id
   ) do
-
     def self.create_from_json(json)
       new(
         json[:type], json[:module], json[:line], json[:column], Pathname.new(json[:path]),
@@ -38,8 +37,10 @@ module Pronto
         .map(&:new_file_full_path)
         .join(' ')
 
-      stdout, stderr, _ = Open3.capture3("#{pylint_executable} --output-format=json #{file_args}")
-      puts "WARN: pronto-pylint:\n\n#{stderr}" if stderr && stderr.size > 0
+      stdout, stderr, = Open3.capture3("#{pylint_executable} --output-format=json #{file_args}")
+      stderr.try(:strip!)
+
+      puts "WARN: pronto-pylint:\n\n#{stderr}" if stderr && !stderr.empty?
 
       JSON.parse(stdout, symbolize_names: true)
         .map { |json| Offence.create_from_json(json) }
@@ -51,11 +52,11 @@ module Pronto
     private
 
     def pylint_executable
-      'pipenv run pylint'
+      'pylint'
     end
 
     def python_patches
-      @pythong_patches ||= @patches
+      @python_patches ||= @patches
         .select { |p| p.additions.positive? }
         .select { |p| p.new_file_full_path.extname == '.py' }
     end
