@@ -37,6 +37,8 @@ module Pronto
         .map(&:new_file_full_path)
         .join(' ')
 
+      return [] if file_args.empty?
+
       stdout, stderr, = Open3.capture3("#{pylint_executable} --output-format=json #{file_args}")
       stderr.strip!
 
