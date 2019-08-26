@@ -70,7 +70,7 @@ module Pronto
 
     def create_message(patch_line, offence)
       Message.new(
-        patch_line.patch.new_file_full_path,
+        offence.path.to_s,
         patch_line,
         offence.pronto_level,
         offence.message,
